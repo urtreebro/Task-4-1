@@ -8,28 +8,16 @@ namespace Task_4_1
 {
     abstract class ArrayBase<T> : IBase<T>
     {
-        protected bool userInput = false;
-
         protected static Random rnd = new();
 
-        protected IValueProvider<T> _valueProvider;
+        protected int capacity;
 
-        protected ArrayBase(IValueProvider<T> _valueProvider, bool userInput = false)
+        protected ArrayBase(int capacity)
         {
-            this.userInput = userInput;
-
-            this._valueProvider = _valueProvider;
-
-            Refill(userInput);
+            this.capacity = capacity;
         }
 
-        protected abstract void RandomInput();
-
-        protected abstract void UserInput();
-
         public abstract void Print();
-
-        public abstract void Refill(bool userInput = false);
 
         public abstract void Add(T element);
 
@@ -38,5 +26,9 @@ namespace Task_4_1
         public abstract void ForEach(Func<T> func);
 
         public abstract void Project<TResult>(Func<T, TResult> project);
+
+        public abstract void Sort();
+
+        public abstract void Reverse();
     }
 }

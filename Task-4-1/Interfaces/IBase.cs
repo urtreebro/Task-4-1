@@ -8,8 +8,6 @@ namespace Task_4_1
 {
     interface IBase<T> : IPrinter
     {
-        void Refill(bool userInput = false);
-
         void Add(T element);
 
         void Remove(T element);
@@ -17,5 +15,9 @@ namespace Task_4_1
         void ForEach(Func<T> func);
 
         void Project<TResult>(Func<T, TResult> project);
+
+        void Sort();
+
+        void Reverse();
     }
 }

@@ -23,12 +23,26 @@ namespace Task_4_1
 
         public abstract void Remove(T element);
 
-        public abstract void ForEach(Func<T> func);
+        public abstract void ForEach(Action<T> action);
 
         public abstract void Project<TResult>(Func<T, TResult> project);
 
         public abstract void Sort();
 
         public abstract void Reverse();
+
+        public abstract T Min();
+
+        public abstract T Max();
+
+        public abstract T[] GetByCondition(Func<T, bool> condition);
+
+        public abstract int Count();
+
+        public abstract int CountByCondition(Func<T, bool> condition);
+
+        public abstract T[] Get(int index, int count);
+
+        public abstract T Find(Func<T, bool> condition);
     }
 }

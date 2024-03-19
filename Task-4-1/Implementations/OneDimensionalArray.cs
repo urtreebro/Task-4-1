@@ -48,21 +48,12 @@ namespace Task_4_1
 
         public override void Add(T element) 
         {
-            if (length < capacity)
+            if (length >= capacity)
             {
-                array[length] = element;
-                length++;
+                Resize();
             }
-            else
-            {
-                AddInResized(element);
-            }
-        }
-
-        private void AddInResized(T element)
-        {
-            Resize();
-            Add(element);
+            array[length] = element;
+            length++;
         }
 
         private void Resize()
@@ -83,7 +74,13 @@ namespace Task_4_1
             Array.Copy(array, index + 1, array, index, length-index);
         }
 
-        public override void ForEach(Func<T> func) { }
+        public override void ForEach(Action<T> action) 
+        {
+            for (int i = 0; i < length; i++)
+            {
+                action(array[i]);
+            }
+        }
 
         public override void Project<TResult>(Func<T, TResult> project) { }
 
@@ -127,6 +124,93 @@ namespace Task_4_1
             }
 
             arrayTemp.CopyTo(array, 0);
+        }
+
+        public override T Min()
+        {
+            IComparer<T> comparer = Comparer<T>.Default;
+
+            T min = array[0];
+
+            for (int i = 1; i < length; i++)
+            {
+                if (comparer.Compare(array[i], min) == -1)
+                {
+                    min = array[i];
+                }
+            }
+            return min;
+
+        }
+
+        public override T Max()
+        {
+            IComparer<T> comparer = Comparer<T>.Default;
+
+            T max = array[0];
+
+            for (int i = 1; i < length; i++)
+            {
+                if (comparer.Compare(array[i], max) == 1)
+                {
+                    max = array[i];
+                }
+            }
+            return max;
+        }
+
+        public override T[] GetByCondition(Func<T, bool> condition)
+        {
+            T[] arrayResult = new T[length];
+
+            int index = 0;
+
+            for (int i = 0; i < length; i++)
+            {
+                if (condition(array[i]))
+                {
+                    arrayResult[index++] = array[i];
+                }
+            }
+            Array.Resize(ref arrayResult, index);
+            return arrayResult;
+        }
+
+        public override int Count() => length;
+
+        public override int CountByCondition(Func<T, bool> condition)
+        {
+            int counter = 0;
+
+            for (int i = 0; i < length; i++)
+            {
+                if (condition(array[i]))
+                {
+                    counter++;
+                }
+            }
+            return counter;
+        }
+
+        public override T[] Get(int index, int count)
+        {
+            T[] arrayResult = new T[count];
+
+            array.CopyTo(arrayResult, index);
+
+            return arrayResult;
+        }
+
+        public override T Find(Func<T, bool> condition)
+        {
+            for (int i = 0; i < length;i++)
+            {
+                if (condition(array[i]))
+                {
+                    return array[i];
+                }
+            }
+            throw new Exception("No elements matched this condition");
         }
     }
 }

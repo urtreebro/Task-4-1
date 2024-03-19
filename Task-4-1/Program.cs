@@ -6,15 +6,14 @@ namespace Task_4_1
     {
         static void Main(string[] args)
         {
-            OneDimensionalArray<string> array = new();
-            array.Add("b");
-            array.Add("a");
-            array.Add("c");
+            OneDimensionalArray<int> array = new();
+            array.Add(1);
+            array.Add(2);
+            array.Add(3);
+            array.Add(4);
             array.Print();
-            array.Sort();
-            array.Print();
-            array.Reverse();
-            array.Print();
+            Func<int, bool> func = (x) => x %2==0;
+            Console.WriteLine(array.Min());
         }
     }
 }

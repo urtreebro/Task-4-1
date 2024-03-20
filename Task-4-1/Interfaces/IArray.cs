@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Task_4_1
 {
-    interface IBase<T> : IPrinter
+    interface IArray<T> : IPrinter
     {
         void Add(T element);
 
@@ -14,7 +14,7 @@ namespace Task_4_1
 
         void ForEach(Action<T> action);
 
-        void Project<TResult>(Func<T, TResult> project);
+        TResult[] Project<TResult>(Func<T, TResult> project);
 
         void Sort();
 
@@ -22,7 +22,7 @@ namespace Task_4_1
 
         T[] Get(int index, int count);
 
-        int Count(); //make a lambda func
+        int Count();
 
         int CountByCondition(Func<T, bool> condition);
 
@@ -30,9 +30,14 @@ namespace Task_4_1
         
         T Min();
 
+        TResult Max<TResult>(Func<T, TResult> projector);
+
+        TResult Min<TResult>(Func<T, TResult> projector);
+
         T Find(Func<T, bool> condition);
 
         T[] GetByCondition(Func<T, bool> condition);
 
+        bool IfAny(Func<T, bool> condition);
     }
 }

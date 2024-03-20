@@ -9,14 +9,27 @@ using System.Timers;
 
 namespace Task_4_1
 {
-    sealed class OneDimensionalArray<T> : ArrayBase<T>
+    sealed class OneDimensionalArray<T> : IArray<T>
     {
         private int length;
 
         T[] array;
 
-        public OneDimensionalArray(int capacity = 0) : base(capacity)
+        private int capacity;
+
+        public OneDimensionalArray(int capacity)
         {
+            ArgumentOutOfRangeException.ThrowIfNegative(capacity);
+
+            this.capacity = capacity;
+
+            array = new T[capacity];
+        }
+
+        public OneDimensionalArray()
+        {
+            this.capacity = 0;
+
             array = new T[capacity];
         }
 
@@ -36,7 +49,7 @@ namespace Task_4_1
             set { array[index] = value; }
         }
 
-        public override void Print()
+        public void Print()
         {
             Console.WriteLine("Printed array:");
             for (int i = 0; i < length; i++)
@@ -46,7 +59,7 @@ namespace Task_4_1
             Console.WriteLine();
         }
 
-        public override void Add(T element) 
+        public void Add(T element) 
         {
             if (length >= capacity)
             {
@@ -66,7 +79,7 @@ namespace Task_4_1
             arrayTemp.CopyTo(array, 0);
         }
 
-        public override void Remove(T element) 
+        public void Remove(T element) 
         {
             int index = Index(element);
             length--;
@@ -74,15 +87,28 @@ namespace Task_4_1
             Array.Copy(array, index + 1, array, index, length-index);
         }
 
-        public override void ForEach(Action<T> action) 
+        public void ForEach(Action<T> action) 
         {
+            ArgumentNullException.ThrowIfNull(action);
+
             for (int i = 0; i < length; i++)
             {
                 action(array[i]);
             }
         }
 
-        public override void Project<TResult>(Func<T, TResult> project) { }
+        public TResult[] Project<TResult>(Func<T, TResult> projector) 
+        {
+            ArgumentNullException.ThrowIfNull(projector);
+
+            TResult[] arrayResult = new TResult[length];
+
+            for (int i = 0; length > i; i++)
+            {
+                arrayResult[i] = projector(array[i]);
+            }
+            return arrayResult;
+        }
 
         private int Index(T element)
         {
@@ -93,12 +119,12 @@ namespace Task_4_1
                     return i;
                 }
             }
-            return -1; //add exception
+            throw new Exception("No such element in array");
         }
 
-        public override void Sort()
+        public void Sort()
         {
-            IComparer<T> comparer = Comparer<T>.Default;
+            Comparer<T> comparer = Comparer<T>.Default;
             for (int i = 1; i < length; i++)
             {
                 int j = i;
@@ -114,7 +140,7 @@ namespace Task_4_1
             }
         }
 
-        public override void Reverse()
+        public void Reverse()
         {
             T[] arrayTemp = new T[length];
 
@@ -126,9 +152,9 @@ namespace Task_4_1
             arrayTemp.CopyTo(array, 0);
         }
 
-        public override T Min()
+        public T Min()
         {
-            IComparer<T> comparer = Comparer<T>.Default;
+            Comparer<T> comparer = Comparer<T>.Default;
 
             T min = array[0];
 
@@ -140,18 +166,35 @@ namespace Task_4_1
                 }
             }
             return min;
-
         }
 
-        public override T Max()
+        public TResult Min<TResult>(Func<T, TResult> projector)
         {
-            IComparer<T> comparer = Comparer<T>.Default;
+            ArgumentNullException.ThrowIfNull(projector);
+
+            Comparer<TResult> comparer = Comparer<TResult>.Default;
+
+            TResult min = projector(array[0]);
+
+            for (int i = 1; i < length; i++)
+            {
+                if (comparer.Compare(projector(array[i]), min) < 0)
+                {
+                    min = projector(array[i]);
+                }
+            }
+            return min;
+        }
+
+        public T Max()
+        {
+            Comparer<T> comparer = Comparer<T>.Default;
 
             T max = array[0];
 
             for (int i = 1; i < length; i++)
             {
-                if (comparer.Compare(array[i], max) == 1)
+                if (comparer.Compare(array[i], max) > 0)
                 {
                     max = array[i];
                 }
@@ -159,8 +202,28 @@ namespace Task_4_1
             return max;
         }
 
-        public override T[] GetByCondition(Func<T, bool> condition)
+        public TResult Max<TResult>(Func<T, TResult> projector)
         {
+            ArgumentNullException.ThrowIfNull(projector);
+
+            Comparer<TResult> comparer = Comparer<TResult>.Default;
+
+            TResult max = projector(array[0]);
+
+            for (int i = 1; i < length; i++)
+            {
+                if (comparer.Compare(projector(array[i]), max) > 0)
+                {
+                    max = projector(array[i]);
+                }
+            }
+            return max;
+        }
+
+        public T[] GetByCondition(Func<T, bool> condition)
+        {
+            ArgumentNullException.ThrowIfNull(condition);
+
             T[] arrayResult = new T[length];
 
             int index = 0;
@@ -176,10 +239,12 @@ namespace Task_4_1
             return arrayResult;
         }
 
-        public override int Count() => length;
+        public int Count() => length;
 
-        public override int CountByCondition(Func<T, bool> condition)
+        public int CountByCondition(Func<T, bool> condition)
         {
+            ArgumentNullException.ThrowIfNull(condition);
+
             int counter = 0;
 
             for (int i = 0; i < length; i++)
@@ -192,17 +257,22 @@ namespace Task_4_1
             return counter;
         }
 
-        public override T[] Get(int index, int count)
+        public T[] Get(int index, int count)
         {
             T[] arrayResult = new T[count];
+            int index1 = 0;
 
-            array.CopyTo(arrayResult, index);
-
+            for (int i = index; i < count+1; i++)
+            {
+                arrayResult[index1++] = array[i];
+            }
             return arrayResult;
         }
 
-        public override T Find(Func<T, bool> condition)
+        public T Find(Func<T, bool> condition)
         {
+            ArgumentNullException.ThrowIfNull(condition);
+
             for (int i = 0; i < length;i++)
             {
                 if (condition(array[i]))
@@ -211,6 +281,46 @@ namespace Task_4_1
                 }
             }
             throw new Exception("No elements matched this condition");
+        }
+
+        public bool Contains(T item)
+        {
+            for (int i = 0; i < length; i++)
+            {
+                if (array[i].Equals(item))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool IfAny(Func<T, bool> condition)
+        {
+            ArgumentNullException.ThrowIfNull(condition);
+
+            for (int i = 0; i < length; i++)
+            {
+                if (condition(array[i]))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool IfAll(Func<T, bool> condition)
+        {
+            ArgumentNullException.ThrowIfNull(condition);
+
+            for (int i = 0; i < length; i++)
+            {
+                if (!condition(array[i]))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

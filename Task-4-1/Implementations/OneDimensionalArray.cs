@@ -11,9 +11,11 @@ namespace Task_4_1
 {
     sealed class OneDimensionalArray<T> : IArray<T>
     {
+        private const int DEFAULT_CAPACITY = 7;
+
         private int length;
 
-        T[] array;
+        private T[] array;
 
         private int capacity;
 
@@ -26,12 +28,7 @@ namespace Task_4_1
             array = new T[capacity];
         }
 
-        public OneDimensionalArray()
-        {
-            this.capacity = 0;
-
-            array = new T[capacity];
-        }
+        public OneDimensionalArray() : this(DEFAULT_CAPACITY) { }
 
         public int Length
         {

@@ -8,7 +8,7 @@ namespace Task_4_1
         {
             OneDimensionalArray<int> array1 = new();
 
-            Random rnd = new Random();
+            Random rnd = new();
 
             for (int i = 0; i < 10; i++)
             {
@@ -59,16 +59,7 @@ namespace Task_4_1
             Console.WriteLine(array2.IfAll(x => x.Length < 7));
         }
 
-        static void Print(int[] array)
-        {
-            for (int i = 0; i < array.Length; i++)
-            {
-                Console.Write(array[i] + " ");
-            }
-            Console.WriteLine();
-        }
-
-        static void Print(string[] array)
+        static void Print<T>(T[] array)
         {
             for (int i = 0; i < array.Length; i++)
             {
